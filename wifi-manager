@@ -1,0 +1,44 @@
+#!/bin/bash
+
+## the while loops emulate the behaviour of the watch
+## bash command without blocking notifications.
+## autoconnect and wifi-check are scripts
+## I wrote as part of this network management setup
+
+## this export prevents autoconnect from sending
+## a notification for connection failure that this
+## script would end up overriding anyway
+
+export PRINTDISABLE="true"
+autoconnect
+while true; do
+	wifi-check
+	STAT=$?
+	echo STAT is $STAT
+	case $STAT in
+
+		1)
+			killall notify-osd
+			notify-send "Connection failed"
+			;;
+
+		2)
+			killall notify-osd
+			notify-send "No networks or profiles available"
+			;;
+
+		3)
+			killall notify-osd
+			notify-send "Network card disabled"
+			;;
+	esac
+	wifi-check
+	while [ $? -eq $STAT ]; do
+		sleep 2
+		if [ $STAT -eq 3 ] && [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
+			killall notify-osd
+			notify-send "Network card enabled"
+		fi
+		wifi-check
+	done
+done

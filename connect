@@ -1,0 +1,43 @@
+#!/bin/bash
+
+## uses my networks script to get an array of all
+## available wifi networks then greps my netctl
+## profiles for those network SSIDs to see if I
+## have a profile that it can get online with.
+
+function startnet {
+	if [ -n "$(sudo ip link show wlp7s0 | grep UP)" ]; then
+		sudo netctl stop-all
+		sudo ip link set wlp7s0 down
+	fi
+	sudo netctl start "$1" 2>/dev/null
+	for i in {0...10}; do
+		sudo netctl start "$1" 2>/dev/null
+		if [ $? -eq 0 ]; then
+			echo "successfully started profile $1"
+			sudo netctl wait-online 42G
+			return 0
+		fi
+	done
+	echo "profile $1 unreachable or unavailable"
+	return 1
+}
+
+if [ -n "$NET" ]; then
+	startnet "$NET"
+	exit $?
+else
+	cd /etc/netctl
+	IFS=$'\n' read -r -d '' -a NETWORKS < <( networks && printf '\0' )
+	for SSID in "${NETWORKS[@]}"; do
+		NET="$(grep -l "$SSID" * 2>/dev/null)"
+		if [ -n "$NET" ]; then
+			echo "attempting to start profile $NET"
+			startnet $NET
+			exit $?
+		fi
+	done
+	echo "no networks available"
+	sudo ip link set wlp7s0 down
+	exit 2
+fi

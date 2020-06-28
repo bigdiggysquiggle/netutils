@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [ -n "$(sudo ip link show wlp7s0 | grep DOWN)" ]; then
+	sudo ip link set wlp7s0 up
+fi
+sudo iw dev wlp7s0 scan | grep SSID | awk '{ for(i=2; i<NF; i++) {printf("%s ", $i)} printf("%s\n", $NF) }'

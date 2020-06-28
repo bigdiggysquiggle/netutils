@@ -1,0 +1,17 @@
+#!/bin/bash
+
+## a wrapper for my connect script that sends notifications
+## based on what connect would print to terminal
+
+PROF=$(connect)
+RET=$?
+
+if [[ $PROF == "no networks available" ]] && [ -z $PRINTDISABLE ]; then
+	killall notify-osd
+	notify-send "Failed to connect to internet"
+elif [ $RET -eq 0 ]; then
+	killall notify-osd
+	notify-send "Connected via profile: $(echo $PROF | tail -1 | awk '{ printf $NF }')"
+fi
+
+exit $RET
