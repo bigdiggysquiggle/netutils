@@ -1,5 +1,28 @@
 #!/bin/bash
 
+function wifi-check {
+
+## if I have a routing table I know I have an active
+## internet connection
+## if no routing table exists then I know I need to
+## check if the device is down or not
+
+## uses my autoconnect script
+
+if [[ "$(ip route get 1.1.1.1 2>&1)" == *"unreachable"* ]]; then
+	echo "device down: checking if it's disabled"
+	if [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
+		echo "device is not disabled"
+		autoconnect
+		return $?
+	else
+		echo "device is disabled"
+		return 3
+	fi
+fi
+return 0
+}
+
 ## the while loops emulate the behaviour of the watch
 ## bash command without blocking notifications.
 ## autoconnect and wifi-check are scripts

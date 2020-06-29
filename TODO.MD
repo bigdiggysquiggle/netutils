@@ -1,9 +1,11 @@
 possible improvements:
--use inotify to monitor processes instead of using test commands (/proc/net/wireless)
--might be able to use jctl instead
-- journalctl -r -g wlp7s0 -n 1 --no-pager
--that lets me get the last message related to my wifi card
--might need to either dig deeper or find another way to get the last status of my wifi card
+-journalctl -g wlp7s0 -r -n 1 --output-fields=dhcpcd --no-pager
+-- lets me get the last dhcpcd message related to my wifi card
+relevant messages:
+Jun 28 18:28:52 Nuthouse dhcpcd[9983]: wlp7s0: deleting default route via 10.10.254.254
+Jun 28 18:28:52 Nuthouse dhcpcd[9983]: wlp7s0: deleting route to 10.10.0.0/16
+Jun 28 18:28:52 Nuthouse dhcpcd[9983]: wlp7s0: carrier lost
+Jun 28 18:28:52 Nuthouse kernel: wlp7s0: deauthenticating from 00:f6:63:fa:75:41 by local choice (Reason: 3=DEAUTH_LEAVING)
 
 future features:
 -profile building script
