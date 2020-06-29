@@ -5,12 +5,13 @@ case $1 in
 	start)
 		killall notify-osd &> /dev/null
 		notify-send "Wifi-Manager started"
-		$(wifi-monitor &> /dev/null & disown)
+		$(connection-monitor &> /dev/null & disown)
 		;;
 
 	stop)
 		killall wifi-monitor &> /dev/null
 		killall notify-osd &> /dev/null
+		sudo netctl stop-all &> /dev/null
 		notify-send "Wifi-Manager stopped"
 		;;
 
