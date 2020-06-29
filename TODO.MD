@@ -12,3 +12,5 @@ future features:
 -place profiles into a user directory instead of /etc/netctl
 --organize profiles by which device they connect on
 ---use directory name as a variable for scripts
+-attempt to connect through a given profile passed as argument
+-consider having the script exit if networks are unavailable unless told otherwise
