@@ -1,67 +1,21 @@
 #!/bin/bash
 
-function wifi-check {
+case $1 in
 
-## if I have a routing table I know I have an active
-## internet connection
-## if no routing table exists then I know I need to
-## check if the device is down or not
+	start)
+		killall notify-osd &> /dev/null
+		notify-send "Wifi-Manager started"
+		$(wifi-monitor &> /dev/null & disown)
+		;;
 
-## uses my autoconnect script
+	stop)
+		killall wifi-monitor &> /dev/null
+		killall notify-osd &> /dev/null
+		notify-send "Wifi-Manager stopped"
+		;;
 
-if [[ "$(ip route get 1.1.1.1 2>&1)" == *"unreachable"* ]]; then
-	echo "device down: checking if it's disabled"
-	if [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
-		echo "device is not disabled"
-		autoconnect
-		return $?
-	else
-		echo "device is disabled"
-		return 3
-	fi
-fi
-return 0
-}
+	*)
+		echo "Usage: wifi-manager [start | stop]"
+		;;
 
-## the while loops emulate the behaviour of the watch
-## bash command without blocking notifications.
-## autoconnect and wifi-check are scripts
-## I wrote as part of this network management setup
-
-## this export prevents autoconnect from sending
-## a notification for connection failure that this
-## script would end up overriding anyway
-
-export PRINTDISABLE="true"
-autoconnect
-while true; do
-	wifi-check
-	STAT=$?
-	echo STAT is $STAT
-	case $STAT in
-
-		1)
-			killall notify-osd
-			notify-send "Connection failed"
-			;;
-
-		2)
-			killall notify-osd
-			notify-send "No networks or profiles available"
-			;;
-
-		3)
-			killall notify-osd
-			notify-send "Network card disabled"
-			;;
-	esac
-	wifi-check
-	while [ $? -eq $STAT ]; do
-		sleep 2
-		if [ $STAT -eq 3 ] && [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
-			killall notify-osd
-			notify-send "Network card enabled"
-		fi
-		wifi-check
-	done
-done
+esac
