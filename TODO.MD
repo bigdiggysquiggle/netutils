@@ -15,3 +15,4 @@ future features:
 -attempt to connect through a given profile passed as argument
 -consider having the script exit if networks are unavailable unless told otherwise
 -consider having wifi-manager disown the process after the connection has been established so I don't feel like I can do internet things too early
+-make the scripts identify the wireless device instead of hardcoding it in
