@@ -23,8 +23,8 @@ function startnet {
 	return 1
 }
 
-if [ -n "$NET" ]; then
-	startnet "$NET"
+if [ -n "$1" ]; then
+	startnet "$1"
 	exit $?
 else
 	cd /etc/netctl
