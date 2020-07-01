@@ -13,7 +13,7 @@ if [[ "$(ip route get 1.1.1.1 2>&1)" == *"unreachable"* ]]; then
 	echo "device down: checking if it's disabled"
 	if [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
 		echo "device is not disabled"
-		autoconnect
+		autoconnect $1
 		return $?
 	else
 		echo "device is disabled"
@@ -33,9 +33,9 @@ return 0
 ## script would end up overriding anyway
 
 export PRINTDISABLE="true"
-autoconnect
+autoconnect $1
 while true; do
-	wifi-check
+	wifi-check $1
 	STAT=$?
 	echo STAT is $STAT
 	case $STAT in
@@ -55,13 +55,13 @@ while true; do
 			notify-send "Network card disabled"
 			;;
 	esac
-	wifi-check
+	wifi-check $1
 	while [ $? -eq $STAT ]; do
 		sleep 2
 		if [ $STAT -eq 3 ] && [[ "$(sudo ip link set wlp7s0 up 2>&1)" != *"RTNETLINK"* ]]; then
 			killall notify-osd
 			notify-send "Network card enabled"
 		fi
-		wifi-check
+		wifi-check $1
 	done
 done

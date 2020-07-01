@@ -3,9 +3,10 @@
 case $1 in
 
 	start)
+		killall wifi-monitor &> /dev/null
 		killall notify-osd &> /dev/null
 		notify-send "Wifi-Manager started"
-		$(connection-monitor &> /dev/null & disown)
+		$(connection-monitor $2 &> /dev/null & disown)
 		;;
 
 	stop)
@@ -16,7 +17,7 @@ case $1 in
 		;;
 
 	*)
-		echo "Usage: wifi-manager [start | stop]"
+		echo "Usage: wifi-manager [start | stop] [profile (optional)]"
 		;;
 
 esac
