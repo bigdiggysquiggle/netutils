@@ -3,17 +3,17 @@
 case $1 in
 
 	start)
-		killall wifi-monitor &> /dev/null
-		sudo netctl stop-all &> /dev/null
+		killall connection-monitor &> /dev/null
+		sudo netctl stop $(sudo netctl list | grep \* | cut -b 3-) &> /dev/null
 		killall notify-osd &> /dev/null
 		notify-send "Wifi-Manager started"
 		$(connection-monitor $2 &> /dev/null & disown)
 		;;
 
 	stop)
-		killall wifi-monitor &> /dev/null
+		killall connection-monitor &> /dev/null
 		killall notify-osd &> /dev/null
-		sudo netctl stop-all &> /dev/null
+		sudo netctl stop $(sudo netctl list | grep \* | cut -b 3-) &> /dev/null
 		notify-send "Wifi-Manager stopped"
 		;;
 

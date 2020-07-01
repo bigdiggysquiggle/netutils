@@ -11,3 +11,9 @@ example in an i3 config). 'wifi-manager' also works
 as a means to start and stop the scripts from a
 terminal if for some reason that is needed. Planned 
 features and half-thoughts are included in TODO.MD
+
+If for some reason you stumbled across this repo
+and decided you wanted to make use of it, it's
+written under the assumption that wherever you
+		sudo netctl stop-all &> /dev/null
+place these scripts is added to your $PATH
