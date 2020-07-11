@@ -16,3 +16,5 @@ If for some reason you stumbled across this repo
 and decided you wanted to make use of it, it's
 written under the assumption that wherever you
 place these scripts is added to your $PATH
+
+Dependencies: netctl, ip
